@@ -1,0 +1,16 @@
+#spring:
+#  redis:
+#    host: 127.0.0.1
+#    port: 6379
+
+#log
+logging:
+  config: classpath:logback-spring.xml
+  path: /logs/${spring.application.name}
+spring:
+  rabbitmq:
+    addresses: 127.0.0.1:5672
+    username: guest
+    password: guest
+  redisson:
+    address: 127.0.0.1:6379
