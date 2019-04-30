@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.redisson:redisson-spring-boot-starter:3.10.6">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.redisson/redisson-spring-boot-starter/3.10.6/da694b0d5b5b035761d2eb5d24ec6605b5285262/redisson-spring-boot-starter-3.10.6.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.redisson/redisson-spring-boot-starter/3.10.6/116dff0a1cb401a46e2f69e32d3c54a36c5e761e/redisson-spring-boot-starter-3.10.6-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

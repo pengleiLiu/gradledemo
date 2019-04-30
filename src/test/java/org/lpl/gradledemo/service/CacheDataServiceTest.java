@@ -7,6 +7,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.lpl.gradledemo.domain.Student;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,12 +40,13 @@ public class CacheDataServiceTest {
       executorService.execute(() -> {
         Thread.currentThread().setName("我的线程池" + index);
         try {
-
           semaphore.acquire();
-          cacheDataService.rushPurchase();
+          cacheDataService.count();
           semaphore.release();
         } catch (Exception e) {
-          logger.error("exception");
+          logger.warn("当前线程是否被中断:{},name:{}", Thread.currentThread().isInterrupted(),
+              Thread.currentThread().getName());
+          logger.error("exception", e);
         }
         countDownLatch.countDown();
       });
@@ -54,11 +56,11 @@ public class CacheDataServiceTest {
     logger.info("count:{}", cacheDataService.getCount());
   }
 
-//  class task implements Runnable{
-//
-//    @Override
-//    public void run() {
-//
-//    }
-//  }
+  @Test
+  public void testSaveStudent() {
+
+    Student student = new Student();
+
+
+  }
 }
