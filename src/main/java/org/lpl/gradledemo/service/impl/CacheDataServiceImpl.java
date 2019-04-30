@@ -1,13 +1,17 @@
 package org.lpl.gradledemo.service.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import org.lpl.gradledemo.common.GsonUtils;
 import org.lpl.gradledemo.common.Page;
+import org.lpl.gradledemo.common.PageUtils;
+import org.lpl.gradledemo.common.PageUtils.PageBuilder;
 import org.lpl.gradledemo.domain.Student;
 import org.lpl.gradledemo.service.CacheDataService;
 import org.redisson.api.RLock;
 import org.redisson.api.RScoredSortedSet;
-import org.redisson.api.RSortedSet;
 import org.redisson.api.RedissonClient;
 import org.redisson.client.protocol.ScoredEntry;
 import org.slf4j.Logger;
@@ -64,25 +68,61 @@ public class CacheDataServiceImpl implements CacheDataService {
   private static final String STUDENT_VOTE_SORTSET = "studentVote";
 
   @Override
-  public Page<Student> listStudent() {
+  public Page<Student> listStudent(Integer pageIndex, Integer pageSize) {
 
-    RScoredSortedSet<Object> scoredSortedSet = redissonClient
+    PageUtils pageUtil = new PageBuilder().pageIndex(pageIndex).pageSize(pageSize).build();
+
+    RScoredSortedSet<Student> scoredSortedSet = redissonClient
         .getScoredSortedSet(STUDENT_VOTE_SORTSET);
 
-    Collection<ScoredEntry<Object>> scoredEntries = scoredSortedSet.entryRange(1, 10);
+    Collection<ScoredEntry<Student>> scoredEntries = scoredSortedSet
+        .entryRange(pageUtil.getPageStart(), pageUtil.getPageEnd());
+
+    List<Student> listStudent = new ArrayList<>();
+
+    scoredEntries.parallelStream().forEach(entry -> {
+      Student student = entry.getValue();
+      student.setVoteCount(new Double(entry.getScore()).longValue());
+      listStudent.add(student);
+    });
 
     Page<Student> page = new Page<>();
 
-    return null;
+    page.setList(listStudent);
+
+    return page;
   }
 
   @Override
-  public void saveStudent(Student student) {
+  public void saveStudent(Student student, Double score) {
 
-    RScoredSortedSet<Object> scoredSortedSet = redissonClient
+    logger.info("保存student信息:{},分数:{}", GsonUtils.toJson(student), score);
+
+    RScoredSortedSet<Student> scoredSortedSet = redissonClient
         .getScoredSortedSet(STUDENT_VOTE_SORTSET);
-    scoredSortedSet.add(0, student);
+    scoredSortedSet.add(score, student);
 
+  }
+
+  @Override
+  public double incrVote(Student student, Double score) {
+
+    logger.info("用户:{}更新票数:{}", GsonUtils.toJson(student), score);
+
+    RScoredSortedSet<Student> scoredSortedSet = redissonClient
+        .getScoredSortedSet(STUDENT_VOTE_SORTSET);
+
+    //scoredSortedSet
+    return scoredSortedSet.addScore(student, score);
+  }
+
+  public void removeStudent(Student student) {
+
+    logger.info("删除用户:{}", GsonUtils.toJson(student));
+
+    RScoredSortedSet<Student> scoredSortedSet = redissonClient
+        .getScoredSortedSet(STUDENT_VOTE_SORTSET);
+    scoredSortedSet.remove(student);
   }
 
 }

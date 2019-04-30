@@ -7,6 +7,9 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.lpl.gradledemo.common.GsonUtils;
+import org.lpl.gradledemo.common.Page;
+import org.lpl.gradledemo.common.PageUtils;
 import org.lpl.gradledemo.domain.Student;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +64,44 @@ public class CacheDataServiceTest {
 
     Student student = new Student();
 
+    student.setId(3L);
+    student.setName("王五");
+    student.setDesc("音乐、运动");
+    student.setVoteCount(0L);
 
+    cacheDataService.saveStudent(student, 7.0);
+
+  }
+
+  @Test
+  public void testListStudent() {
+
+    Integer pageIndex = 0;
+    Integer pageSize = 10;
+    Page<Student> studentPage = cacheDataService.listStudent(pageIndex, pageSize);
+    logger.info("学生列表:{}", GsonUtils.toJson(studentPage));
+  }
+
+  @Test
+  public void testIncrVote() {
+    Long id = 1L;
+    Double vote = 1.0;
+
+    Student student = new Student();
+    student.setId(id);
+    student.setName("张三");
+    student.setDesc("音乐、运动");
+    student.setVoteCount(0L);
+
+    cacheDataService.incrVote(student, vote);
+  }
+
+  @Test
+  public void testRemoveStudent() {
+    Long id = 1L;
+
+    Student student = new Student();
+    student.setId(id);
+    cacheDataService.removeStudent(student);
   }
 }
