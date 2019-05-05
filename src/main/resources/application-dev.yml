@@ -8,10 +8,12 @@ logging:
   config: classpath:logback-spring.xml
   path: /logs/${spring.application.name}
 spring:
+  #rabbitmq
   rabbitmq:
     addresses: 127.0.0.1:5672
     username: guest
     password: guest
+  #redis
   redisson:
     address: 127.0.0.1:6379
   #kafka
@@ -19,3 +21,6 @@ spring:
     bootstrap-servers: localhost:9092
     consumer:
       group-id: vote-group
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 public class MsgConsumer {
 
 
-  private final static String TOPIC = "a";
+  private final static String TOPIC = "msg-vote";
 
   @KafkaListener(topics = {TOPIC})
   public void processMessage(String content) {
